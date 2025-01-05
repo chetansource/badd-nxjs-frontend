@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("/font/Metropolis-SemiBold.otf") format("opentype");
+  font-weight: 600; /* Adjust based on the font's weight */
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
