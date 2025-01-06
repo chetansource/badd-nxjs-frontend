@@ -89,7 +89,7 @@ const MainContent = ({ query }: MainContentProps) => {
 
   return (
     <>
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 pt-20 gap-10 md:gap-16 font-metropolis py-8 px-4 md:px-0 z-1">
+      <div className=" mx-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pt-20 gap-10 md:gap-8 lg:gap-16 font-metropolis py-8 px-4 md:px-6 lg:mx-auto z-1">
         {filteredPubs() && filteredPubs().length > 0
           ? filteredPubs().map((pub:Pub) => <PubCard key={pub.ID} pub={pub} />)
           : Array.from({ length: 9 }).map((_, index) => (
