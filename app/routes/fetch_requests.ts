@@ -13,7 +13,6 @@ export async function getPubsInfo(page: number,token: string) {
     const res = await fetch(url, config);
     if (res.ok) {
       const data = res.json();
-      console.log("data",data)
       return data;
     }
   } catch (error) {

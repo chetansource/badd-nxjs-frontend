@@ -9,7 +9,8 @@ const auth = getAuth(firebase_app)
 export interface AuthContextType { 
     googleLogin: () => Promise<UserCredential|void>,
     signOut: () => Promise<void>,
-    user: User | null
+    user: User | null,
+    getToken: () => Promise<string | null>;
 }
 
 interface AuthProviderProps {
@@ -20,7 +21,8 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextType>({
     googleLogin: async () => undefined,
     signOut: async () => {},
-    user: null
+    user: null,
+    getToken: async () => null,
 })
 
 //create provider
@@ -45,16 +47,32 @@ export const AuthContextProvider = ({ children }: AuthProviderProps) => {
             console.error("Error signing out with Google", error);
         }
     }
+    const getToken = async (): Promise<string | null> => {
+        if (user) {
+            try {
+                return await user.getIdToken(true); // Force refresh the token
+            } catch (error) {
+                console.error("Error refreshing token:", error);
+                return null;
+            }
+        }
+        return null;
+    };
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            setUser(user)
+        const unsubscribe = auth.onAuthStateChanged(async(user) => {
+            if (user) {
+                await user.getIdToken(true); // Refresh the token initially
+                setUser(user);
+            } else {
+                setUser(null);
+            }
         })
         return () => unsubscribe()
      }, [])
 
     return (
-        <AuthContext.Provider value={{ googleLogin, signOut, user }}>
+        <AuthContext.Provider value={{ googleLogin, signOut, user, getToken }}>
             {children}
         </AuthContext.Provider>
     )

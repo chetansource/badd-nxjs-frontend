@@ -45,7 +45,7 @@ const MainContent = ({ query }: MainContentProps) => {
   const [pubInfo, setPubInfo] = useState<Pub[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(15);
-  const { user } = UserAuth();
+  const { user,getToken } = UserAuth();
   const router = useRouter();
 
 
@@ -63,11 +63,15 @@ const MainContent = ({ query }: MainContentProps) => {
 
     const fetchData = async (page: number) => {
       try {
-        if (user) {
-          const token = await user.getIdToken(); // Get the Firebase token
-          const data = await getPubsInfo(page, token);
-          if (data) {
-            setPubInfo(data);
+        if (user ) {
+          const token = await getToken(); // Get the Firebase token
+          if (token) {
+            const data = await getPubsInfo(page, token);
+            if (data) {
+              setPubInfo(data);
+            }
+          } else {
+            console.error("Token is null or invalid.");
           }
         }
       } catch (error) {
@@ -76,12 +80,12 @@ const MainContent = ({ query }: MainContentProps) => {
     }
 
     if (!user?.emailVerified) {
-      router.prefetch("/login");
+      // router.prefetch("/login");
       router.push("/login");
     } else {
       fetchData(currentPage);
     }
-  }, [user, currentPage, router]);
+  }, [user, currentPage, router, getToken]);
 
   return (
     <>
